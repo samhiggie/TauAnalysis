@@ -107,11 +107,10 @@ int main(int argc, char * argv[]) {
     const double  againstMuonTight3  = cfg.get<double>("againstMuonTight3");
     const double  vertexz =  cfg.get<double>("vertexz");
     const double  byCombinedIsolationDeltaBetaCorrRaw3Hits = cfg.get<double>("byCombinedIsolationDeltaBetaCorrRaw3Hits");
-    const double ptTauTauCut = cfg.get<double>("ptTauTauCut"); 
     /////// di-tau and tau trigger 
     const double ptTauCutTauTau = cfg.get<double>("ptTauCutTauTau"); 
     const double etaTauCutTauTau = cfg.get<double>("etaTauCutTauTau"); 
-    const double dRleptonsCutTauTau = cfg.get<double>("dRleptonsCutTau"); 
+    const double dRleptonsCutTauTau = cfg.get<double>("dRleptonsCutTauTau"); 
     
 
 
@@ -173,7 +172,9 @@ int main(int argc, char * argv[]) {
     const double deltaRTrigMatch = cfg.get<double>("DRTrigMatch");
     const bool isIsoR03 = cfg.get<bool>("IsIsoR03");
 
-    const string TrigLeg  = cfg.get<string>("SingleMuonFilterName") ;
+    const string TrigLegMu  = cfg.get<string>("SingleMuonFilterName") ;
+    const string TrigLegTau  = cfg.get<string>("TauFilterName") ;
+    const string TrigLegTau2  = cfg.get<string>("TauFilterName2") ;
     const double SingleMuonTriggerPtCut = cfg.get<double>("SingleMuonTriggerPtCut");
     const double ThirdLeptonPtCut = cfg.get<double>("ThirdLeptonPtCut");
 
@@ -208,7 +209,9 @@ int main(int argc, char * argv[]) {
             ss >> periods.back();
         }
     }
-    TString MainTrigger(TrigLeg);
+    TString MainTriggerMu(TrigLegMu);
+    TString MainTriggerTau(TrigLegTau);
+    TString MainTriggerTau2(TrigLegTau2);
 
 
     const double bTag   = cfg.get<double>("bTag");
@@ -954,8 +957,12 @@ int main(int argc, char * argv[]) {
 
             bool trigAccept = false;
 
-            unsigned int nMainTrigger = 0;
-            bool isMainTrigger = false;
+            unsigned int nMainTriggerMu = 0;
+            unsigned int nMainTriggerTau = 0;
+            unsigned int nMainTriggerTau2 = 0;
+            bool isMainTriggerMu = false;
+            bool isMainTriggerTau = false;
+            bool isMainTriggerTau2 = false;
 
             //      if (!isSignal){
             unsigned int nfilters = analysisTree.run_hltfilters->size();
@@ -963,9 +970,11 @@ int main(int argc, char * argv[]) {
             for (unsigned int i=0; i<nfilters; ++i) {
                 //	std::cout << "HLT Filter : " << i << " = " << analysisTree.run_hltfilters->at(i) << std::endl;
                 TString HLTFilter(analysisTree.run_hltfilters->at(i));
-                if (HLTFilter==MainTrigger) {
-                    nMainTrigger = i;
-                    isMainTrigger = true;
+                if (HLTFilter==MainTriggerMu || HLTFilter==MainTriggerTau || HLTFilter==MainTriggerTau2) {
+
+                   if (MainTriggerMu) { nMainTriggerMu = i;isMainTriggerMu = true;}
+		   if (MainTriggerTau) {nMainTriggerTau = i; isMainTriggerTau = true;}
+		   if (MainTriggerTau2) {nMainTriggerTau2= i; isMainTriggerTau2 = true;}
                 }
 
 
@@ -973,10 +982,10 @@ int main(int argc, char * argv[]) {
             }
             //	}//if isData check for filters
 
-            //      if (isSignal) isMainTrigger = true;
+            //      if (isSignal) isMainTriggerMu = true;
 
-            if (!isMainTrigger) {
-                std::cout << "HLT filter for Mu Trigger " << MainTrigger << " not found" << std::endl;
+            if (!isMainTriggerMu && !isMainTriggerTau && !isMainTriggerTau2) {
+                std::cout << "HLT filters failed " << MainTriggerMu << " "<<isMainTriggerTau<<"  "<<isMainTriggerTau2<<" not found" << std::endl;
                 return(-1);
             }
 
@@ -1007,13 +1016,13 @@ int main(int argc, char * argv[]) {
                 neutralIso = TMath::Max(float(0),neutralIso); 
                 absIso += neutralIso;
                 float relIso = absIso/analysisTree.muon_pt[im];
-                if (relIso>0.35) continue;
+                if (relIso>0.5) continue;
                 isoMuons.push_back(im);
                 isoMuonsValue.push_back(relIso);
                 muons.push_back((int)im);
 
                 for (unsigned int iT=0; iT<analysisTree.trigobject_count; ++iT) {
-                    if (analysisTree.trigobject_filters[iT][nMainTrigger]
+                    if (analysisTree.trigobject_filters[iT][nMainTriggerMu]
                             && analysisTree.muon_pt[im]>SingleMuonTriggerPtCut &&//pt cut to be 8GeV 
                             analysisTree.trigobject_pt[iT]>SingleMuonTriggerPtCut) { // IsoMu Leg
 
@@ -1079,7 +1088,7 @@ int main(int argc, char * argv[]) {
                         bool isMu2matched = false;
 
                         for (unsigned int iT=0; iT<analysisTree.trigobject_count; ++iT) {
-                            if (analysisTree.trigobject_filters[iT][nMainTrigger]
+                            if (analysisTree.trigobject_filters[iT][nMainTriggerMu]
                                     && analysisTree.muon_pt[index2]>SingleMuonTriggerPtCut &&  analysisTree.trigobject_pt[iT]>SingleMuonTriggerPtCut) { // IsoMu Leg
                                 float dRtrig = deltaR(analysisTree.muon_eta[index2],analysisTree.muon_phi[index2],
                                         analysisTree.trigobject_eta[iT],analysisTree.trigobject_phi[iT]);
@@ -1191,7 +1200,7 @@ int main(int argc, char * argv[]) {
 
 
                         for (unsigned int iT=0; iT<analysisTree.trigobject_count; ++iT) {
-                            if (analysisTree.trigobject_filters[iT][nMainTrigger]
+                            if (analysisTree.trigobject_filters[iT][nMainTriggerMu]
                                     && analysisTree.muon_pt[index4]>SingleMuonTriggerPtCut &&  analysisTree.trigobject_pt[iT]>SingleMuonTriggerPtCut) { // IsoMu Leg
                                 float dRtrig = deltaR(analysisTree.muon_eta[index4],analysisTree.muon_phi[index4],
                                         analysisTree.trigobject_eta[iT],analysisTree.trigobject_phi[iT]);
@@ -1293,7 +1302,6 @@ int main(int argc, char * argv[]) {
             for (unsigned int it = 0; it<analysisTree.tau_count; ++it) {
 
                 //if (analysisTree.tau_pt[it] < ThirdLeptonPtCut+5 ) continue; 
-                if (analysisTree.tau_decayModeFinding[it]<=0.5) continue;
                 if (analysisTree.tau_pt[it] < ptTauCut ) continue; 
                 if (fabs(analysisTree.tau_eta[it])> etaTauCut) continue;//Changed this in config
                 if (analysisTree.tau_decayModeFinding[it]<decayModeFinding) continue;
@@ -1364,8 +1372,8 @@ int main(int argc, char * argv[]) {
                     //Added trigger info for 2 tau events
                     //going to see if both taus pass the trigger ... namely 35 GeV and Delta  R cut
                     for (unsigned int iT1=0; iT1<analysisTree.trigobject_count; ++iT1) {
-                        if (analysisTree.trigobject_filters[iT1][nMainTrigger]
-                                && analysisTree.tau_pt[it1]>ptTauTauCut &&//pt cut to be 10GeV 
+                        if ( ( analysisTree.trigobject_filters[iT1][nMainTriggerTau] || analysisTree.trigobject_filters[iT1][nMainTriggerTau2])
+                                && analysisTree.tau_pt[it1]>40 &&//pt cut to be 10GeV 
                                 analysisTree.trigobject_pt[iT1]>ptTauCutTauTau) { // Trigger on above 35GeV
 
                             float dRtrig = deltaR(analysisTree.tau_eta[it1],analysisTree.tau_phi[it1],
@@ -1375,8 +1383,8 @@ int main(int argc, char * argv[]) {
                                 isTauFilterNameMatch1 = 1;// save flag in the tree later...consider if add cuts above or remove...  
                             //First Tau pass... on to the 2nd 
                         for (unsigned int iT2=0; iT2<analysisTree.trigobject_count; ++iT2) {
-                            if (analysisTree.trigobject_filters[iT2][nMainTrigger]
-                                    && analysisTree.tau_pt[it2]>ptTauTauCut &&//pt cut to be 10GeV 
+                        if ( ( analysisTree.trigobject_filters[iT1][nMainTriggerTau] || analysisTree.trigobject_filters[iT1][nMainTriggerTau2])
+                                    && analysisTree.tau_pt[it2]>40 &&//pt cut to be 10GeV 
                                     analysisTree.trigobject_pt[iT2]>ptTauCutTauTau) { // Trigger on above 35GeV
 
                                 float dRtrig = deltaR(analysisTree.tau_eta[it2],analysisTree.tau_phi[it2],
@@ -1398,10 +1406,6 @@ int main(int argc, char * argv[]) {
 
 
             if (isTauPair){
-
-                if ( analysisTree.tau_againstElectronVLooseMVA6[tau_index_1]<0.5 ||   analysisTree.tau_againstMuonLoose3[tau_index_1]<0.5 ||
-                        analysisTree.tau_againstElectronVLooseMVA6[tau_index_2]<0.5 ||   analysisTree.tau_againstMuonLoose3[tau_index_2]<0.5 ) continue;
-
 
 
                             float isoTau1 = analysisTree.tau_byIsolationMVArun2v1DBoldDMwLTraw[tau_index_1];
@@ -1567,7 +1571,7 @@ int main(int argc, char * argv[]) {
                 double neutralIsoElec = max(double(0),neutralIsoElecN); 
                 float absIsoElec = chargedHadIsoElec + neutralIsoElec;
                 float relIsoElec = absIsoElec/float(analysisTree.electron_pt[eIndex]);
-                if (relIsoElec>0.35) continue;
+                if (relIsoElec>0.5) continue;
 
                 float dRel3mu1 = deltaR(analysisTree.electron_eta[eIndex],analysisTree.electron_phi[eIndex],
                         analysisTree.muon_eta[mu_index_1],analysisTree.muon_phi[mu_index_1]);
