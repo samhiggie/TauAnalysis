@@ -1311,9 +1311,13 @@ int main(int argc, char * argv[]) {
             }
 
             ///////////search for 2nd tau
+            //Below are paramters to show if the taus pass pT or if they pass the trigger
 
             bool isTauPair = false;
             float pTtauPair =0;
+            isTauFilterNameMatch1=0;
+            isTauFilterNameMatch2=0;
+            
             for (unsigned int it1=0; it1<taus.size(); ++it1){
                 unsigned int tIndex1 = taus.at(it1);
 
@@ -1368,7 +1372,7 @@ int main(int argc, char * argv[]) {
                                     analysisTree.trigobject_eta[iT1],analysisTree.trigobject_phi[iT1]);
                                 
                             if (dRtrig<deltaRTrigMatch){ 
-                                isTauFilterNameMatch1 = true;// save flag in the tree later...consider if add cuts above or remove...  
+                                isTauFilterNameMatch1 = 1;// save flag in the tree later...consider if add cuts above or remove...  
                             //First Tau pass... on to the 2nd 
                         for (unsigned int iT2=0; iT2<analysisTree.trigobject_count; ++iT2) {
                             if (analysisTree.trigobject_filters[iT2][nMainTrigger]
@@ -1380,7 +1384,7 @@ int main(int argc, char * argv[]) {
                                     }
                                     
                              if (dRtrig<deltaRTrigMatch){ 
-                                 isTauFilterNameMatch2 = true;// save flag in the tree later...consider if add cuts above or remove...  
+                                 isTauFilterNameMatch2 = 1;// save flag in the tree later...consider if add cuts above or remove...  
                                 
                              }
                                 

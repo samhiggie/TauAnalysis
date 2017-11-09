@@ -32,9 +32,9 @@ int el_index=-1;
 
 //Sam's Addition
 //Flags for trigger matching
-Bool_t singleMuonMatch=false;
-Bool_t isTauFilterNameMatch1=false;
-Bool_t isTauFilterNameMatch2=false;
+Int_t singleMuonMatch;
+Int_t isTauFilterNameMatch1;
+Int_t isTauFilterNameMatch2;
 
 
    Int_t          primvert_count;

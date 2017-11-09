@@ -94,6 +94,8 @@ public :
    Float_t         NuPhi;
    Bool_t          singleMuonMatch;
    Bool_t          tau_trig_match;
+   Bool_t          isTauFilterNameMatch1;
+   Bool_t          isTauFilterNameMatch2;
    Float_t         met_scaleUp;
    Float_t         met_scaleDown;
    Float_t         metphi_scaleUp;
@@ -331,6 +333,8 @@ public :
    TBranch        *b_NuPz;   //!
    TBranch        *b_singleMuonMatch; //!
    TBranch        *b_tau_trig_match; //!
+   TBranch        *b_isTauFilterNameMatch1; //!
+   TBranch        *b_isTauFilterNameMatch2; //!
    TBranch        *b_NuPt;   //!
    TBranch        *b_NuPhi;   //!
    TBranch        *b_met_scaleUp;   //!
@@ -1090,6 +1094,20 @@ if (pzetavis !=0) dzetaR = pzetamiss/pzetavis;
         //Is double electron possible?
         //not yet
         //if(electron_index.size()>1 &&
+        
+        //looking if the taus pass the offline trigger... 
+
+        if(isTauFilterNameMatch1==true){
+            TLorentzVector DiL2 = LeptTau1 + LeptTau2;
+            hInvMass1TauTrig[CutIndex]->Fill(DiT2.M(),EvWeight);
+            hInvMass1TauTrigFB[CutIndex]->Fill(DiT2.M(),EvWeight);
+        }
+        if(isTauFilterNameMatch2==true){
+            TLorentzVector DiL2 = LeptTau1 + LeptTau2;
+            hInvMass2TauTrig[CutIndex]->Fill(DiT2.M(),EvWeight);
+            hInvMass2TauTrigFB[CutIndex]->Fill(DiT2.M(),EvWeight);
+        }
+        
 
     }
 
@@ -1294,6 +1312,9 @@ void analyzer::Init(TTree *tree)
    fChain->SetBranchAddress("NuPt", &NuPt, &b_NuPt);
    fChain->SetBranchAddress("NuPhi", &NuPhi, &b_NuPhi);
    fChain->SetBranchAddress("tau_trig_match", &tau_trig_match, &b_tau_trig_match);
+   fChain->SetBranchAddress("isTauFilterNameMatch1", &isTauFilterNameMatch1, &b_isTauFilterNameMatch1);
+   fChain->SetBranchAddress("isTauFilterNameMatch2", &isTauFilterNameMatch2, &b_isTauFilterNameMatch2);
+    
    fChain->SetBranchAddress("singleMuonMatch", &singleMuonMatch, &b_singleMuonMatch);
    fChain->SetBranchAddress("met_scaleUp", &met_scaleUp, &b_met_scaleUp);
    fChain->SetBranchAddress("met_scaleDown", &met_scaleDown, &b_met_scaleDown);

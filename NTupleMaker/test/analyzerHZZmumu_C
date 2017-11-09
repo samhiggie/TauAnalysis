@@ -468,11 +468,11 @@ if(taus_index_2>-1 )			LeptTau2.SetPtEtaPhiM(ta_pt[taus_index_2], ta_eta[taus_in
 		if (isElTau && ta_IsoFlag < 0.5) continue;
 
 
-		 TLorentzVector DiL = LeptV1 + LeptV2  ;
-		 TLorentzVector DiL2 ;
-		 if (isMuTau) DiL2 = LeptMu3 + LeptTau  ;
-		 if (isElTau) DiL2 = LeptEl3 + LeptTau  ;
-		 if (isTauTau) DiL2 = LeptTau1 + LeptTau2  ;
+		TLorentzVector DiL = LeptV1 + LeptV2  ;
+		TLorentzVector DiL2 ;
+		if (isMuTau) DiL2 = LeptMu3 + LeptTau  ;
+		if (isElTau) DiL2 = LeptEl3 + LeptTau  ;
+		if (isTauTau) DiL2 = LeptTau1 + LeptTau2  ;
 		
 		if (DiL.M()<4) continue;
 		if (DiL2.M()<4) continue;

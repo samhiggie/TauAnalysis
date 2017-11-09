@@ -375,6 +375,11 @@ TH1D *hInvMass2l2TauFB[CutN];
 TH1D *hInvMass2Tau[CutN];
 TH1D *hInvMass2TauFB[CutN];
 
+TH1D *hInvMass2TauTrig[CutN];
+TH1D *hInvMass2TauTrigFB[CutN];
+TH1D *hInvMass1TauTrig[CutN];
+TH1D *hInvMass1TauTrigFB[CutN];
+
 TH1D * hInvMass3ElTau[CutN];
 TH1D * hInvMass2ElMuTau[CutN];
 TH1D * hInvMass2El2Tau[CutN];
@@ -1324,8 +1329,18 @@ for(int cj = 0; cj < CutNer; cj++)
       hInvMass2l2TauFB[cj]->Sumw2();
       hInvMass2Tau[cj] = new TH1D ("hInvMass2Tau_"+nCut,"hInvMass2Tau "+cutName,10,0,200);
       hInvMass2Tau[cj]->Sumw2();
-      hInvMass2TauFB[cj] = new TH1D ("hInvMass2TauFB_"+nCut,"hInvMass2Tau "+cutName,40,0,200);
+      hInvMass2TauFB[cj] = new TH1D ("hInvMass2TauFB_"+nCut,"hInvMass2TauFB "+cutName,40,0,200);
       hInvMass2TauFB[cj]->Sumw2();
+
+      hInvMass1TauTrig[cj] = new TH1D ("hInvMass1TauTrig_"+nCut,"hInvMass1TauTrig "+cutName,40,0,200);
+      hInvMass1TauTrig[cj]->Sumw2();
+      hInvMass1TauTrigFB[cj] = new TH1D ("hInvMass1TauTrigFB_"+nCut,"hInvMass1TauTrigFB "+cutName,40,0,200);
+      hInvMass1TauTrigFB[cj]->Sumw2();
+      hInvMass2TauTrig[cj] = new TH1D ("hInvMass2TauTrig_"+nCut,"hInvMass2TauTrig "+cutName,40,0,200);
+      hInvMass2TauTrig[cj]->Sumw2();
+      hInvMass2TauTrigFB[cj] = new TH1D ("hInvMass2TauTrigFB_"+nCut,"hInvMass2TauTrigFB "+cutName,40,0,200);
+      hInvMass2TauTrigFB[cj]->Sumw2();
+
       hInvMass3ElTauFB[cj] = new TH1D ("hInvMass3ElTauFB_"+nCut,"hInvMass3ElTauFB "+cutName,60,0,300);
       hInvMass3ElTauFB[cj]->Sumw2();
       hInvMass2ElMuTauFB[cj] = new TH1D ("hInvMass2ElMuTauFB_"+nCut,"hInvMass2ElMuTauFB "+cutName,60,0,300);
